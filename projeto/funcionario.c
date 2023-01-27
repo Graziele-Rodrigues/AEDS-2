@@ -111,10 +111,32 @@ void insere_funcionarios(FILE *out) {
     free(f);
 }
 
-void insere_funcionarios_2(FILE *out, int i) {
-    TFunc *f = funcionario(i, "XXXX", 0000);
-    salva(f, out);
-    free(f);
+int generate_unique_id() {
+    int id = rand() % MAX_ID;
+    for (int i = 0; i < NUM_EMPLOYEES; i++) {
+        if (ids[i] == id) {
+            // ID já foi gerado antes, gerar outro
+            return generate_unique_id();
+        }
+    }
+    // ID nunca foi gerado antes, usá-lo
+    return id;
+}
+
+void insere_funcionarios_2(FILE *out) {
+    #define NUM_EMPLOYEES 1000
+    // Gerar nomes e salários aleatórios
+    char *nome[] = {"Maria", "João", "Carlos", "Ana", "Paulo", "Lucia"};
+    int num_names = sizeof(nome) / sizeof(nome[0]);
+    double salario[NUM_EMPLOYEES];
+    for (int i = 0; i < NUM_EMPLOYEES; i++) {
+        ids[i] = generate_unique_id();
+        int random_index = rand() % num_names;
+        salario[i] = (double)rand() / RAND_MAX * (10000 - 1000) + 1000;
+        TFunc *f = funcionario(ids[i], nome[random_index], salario[i]);
+        salva(f, out);
+        free(f);
+    }
 }
 
 //para usar busca binaria o arquivo já tem que estar ordenado. Aqui estamos colocando em ordem, mas o correto é utilizar o insertSort
