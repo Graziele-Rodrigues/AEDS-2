@@ -55,12 +55,8 @@ void buscaSequencial(){
     else {
         //insere funcionários
         printf("Inserindo funcionarios no arquivo...");
-        for(int i=1; i<=1000; i++){
-        insere_funcionarios_2(out, i);
-        }
-        //volta ao início do arquivo e lê os funcionários inseridos
-        //le_funcionarios(out);
-        //busca 50 funcionarios e salva em busca.dat
+        insere_funcionarios_2(out);
+       //buscando funcionario 50 funcionarios pelo numero de id digitado
         busca_funcionarios(out);
         //fecha arquivo
         fclose(out);
@@ -68,6 +64,8 @@ void buscaSequencial(){
 }
 
 /* ############################ BUSCA BINARIA ############################ */
+
+//Arquivos devem estar ordenados
 
 TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim) {
     TFunc *f = NULL;
@@ -101,9 +99,8 @@ void buscaBinaria(){
     if ((arq = fopen("funcionario.dat", "wb+")) == NULL) {
         printf("Erro ao abrir arquivo\n");
     } else {
-        //insere funcionÃƒÂ¡rios
+        //insere funcionarios
         insere_funcionarios_3(arq);
-        //forÃƒÂ§a flush para salvar funcionÃƒÂ¡rios
         fflush(arq);
         imprime_arquivo(arq);
         printf("\n\nDigite a chave a ser buscada: ");
