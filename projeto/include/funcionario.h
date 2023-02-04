@@ -1,4 +1,5 @@
 #include <math.h>
+#include <time.h>
 
 
 typedef struct Funcionario {
@@ -7,23 +8,21 @@ typedef struct Funcionario {
     double salario;
 } TFunc;
 
-#define NUM_EMPLOYEES 1000
-#define MAX_ID 10000
-int ids[NUM_EMPLOYEES];
+#define NUM_EMPLOYEES 5000
+#define MAX_ID 5000
+int id[NUM_EMPLOYEES];
+int is_unique;
+int comparisons;
+clock_t start, end;
 
-int generate_unique_id();
-void imprime(TFunc *func);
+void generate_unique_id();
 TFunc *funcionario(int cod, char *nome, double salario);
 void salva(TFunc *func, FILE *out);
 TFunc *le(FILE *in);
 void le_funcionarios(FILE *in);
-TFunc *le_funcionario(FILE *in);
-void imprime_arquivo(FILE *arq);
+void imprime(TFunc *func);
 void insere_funcionarios(FILE *out);
-void insere_funcionarios_2(FILE *out);
-void insere_funcionarios_3(FILE *out);
-void le_segundo_funcionario(FILE *in);
-void adiciona_funcionario(FILE *in);
-void sobrescreve_quarto_funcionario(FILE *in);
 int tamanho_registro();
 int tamanho_arquivo(FILE *arq);
+void busca_funcionarios(FILE *out);
+TFunc *busca_sequencial(FILE *busca, int chave);
