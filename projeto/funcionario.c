@@ -53,6 +53,7 @@ TFunc *le(FILE *in) {
 }
 
 
+
 void le_funcionarios(FILE *in) {
     printf("\n\nLendo funcionarios do arquivo...\n\n");
     rewind(in);
@@ -63,11 +64,23 @@ void le_funcionarios(FILE *in) {
     }
 }
 
+void imprime_arquivo(FILE *arq) {
+    //le o arquivo e coloca no vetor
+    rewind(arq); //posiciona cursor no inicio do arquivo
+    TFunc *f = le(arq);
+    int i = 0;
+    while (!feof(arq)) {
+        imprime(f);
+        f = le(arq);
+    }
+}
+
+
 void generate_unique_id() {
     for (int i = 0; i < NUM_EMPLOYEES; i++) {
         do {
             is_unique = 1;
-            id[i] = rand() % MAX_ID;
+            id[i] = rand() % NUM_EMPLOYEES;
             for (int j = 0; j < i; j++) {
                 if (id[i] == id[j]) {
                     is_unique = 0;
@@ -115,30 +128,107 @@ TFunc *busca_sequencial(FILE *busca, int chave){
     }
 }
 
-void busca_funcionarios(FILE *out){
+void busca_funcionarios_sequencial(FILE *out){
     FILE *busca;
     busca = fopen("busca.dat", "w+b");
     TFunc *f;
     int chave=0;
     for(int i=0; i<50;i++){
-        chave = rand() % MAX_ID;
+        chave = rand() % NUM_EMPLOYEES;
         f = busca_sequencial(out, chave);
         if(f!= NULL){
-            salva(f, busca);
             imprime(f);
             printf("\nQuantidade de comparacoes: %d\n", comparisons);
             printf("Tempo gasto: %.2f segundos\n", (double)(end - start) / CLOCKS_PER_SEC);
-        }
+            salva(f, busca);        }
         else{
             printf("%d, nao encontrado\n", chave);
         }
         free(f);
     }
-    le_funcionarios(busca);
+    imprime_arquivo(busca);
     fclose(busca);
 }
 
+/*#################################### INSERTION SORT DISCO ####################################*/
+void insertion_sort_disco(FILE *arq, int tam) {
+    int i;
+    //faz o insertion sort
+    for (int j = 2; j <= tam; j++) {
+        //posiciona o arquivo no registro j
+        fseek(arq, (j-1) * tamanho_registro(), SEEK_SET);
+        TFunc *fj = le(arq);
+        i = j - 1;
+        //posiciona o cursor no registro i
+        fseek(arq, (i-1) * tamanho_registro(), SEEK_SET);
+        TFunc *fi = le(arq);
+        while ((i > 0) && (fi->cod > fj->cod)) {
+            //posiciona o cursor no registro i+1
+            fseek(arq, i * tamanho_registro(), SEEK_SET);
+            salva(fi, arq);
+            i = i - 1;
+            //le registro i
+            fseek(arq, (i-1) * tamanho_registro(), SEEK_SET);
+            fi = le(arq);
+        }
+        //posiciona cursor no registro i + 1
+        fseek(arq, (i) * tamanho_registro(), SEEK_SET);
+        //salva registro j na posicao i
+        salva(fj, arq);
+    }
+    //descarrega o buffer para ter certeza que dados foram gravados
+    fflush(arq);
+}
 
+/*#################################### BUSCA BINARIA ####################################*/
+
+TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim) {
+    comparisons=0;
+    TFunc *f = NULL;
+    int cod = -1;
+    start = clock();
+    while (inicio <= fim && cod != chave) {
+        comparisons++;
+        int meio = trunc((inicio + fim) / 2);
+        fseek(in, (meio -1) * tamanho_registro(), SEEK_SET);
+        f = le(in);
+        cod = f->cod;
+        if (f) {
+            if (cod > chave) {
+                fim = meio - 1;
+            } else {
+                inicio = meio + 1;
+            }
+        }
+    }
+    if (cod == chave) {
+        end = clock();
+        return f;
+    }
+    else return NULL;
+}
+
+void busca_funcionarios_binario(FILE *out){
+    FILE *busca;
+    busca = fopen("busca.dat", "w+b");
+    TFunc *f;
+    int chave=0;
+    for(int i=0; i<50;i++){
+        chave = rand() % NUM_EMPLOYEES;
+        f = busca_binaria(chave, out, 0, tamanho_arquivo(out)-1);
+        if(f!= NULL){
+            imprime(f);
+            printf("\nQuantidade de comparacoes: %d\n", comparisons);
+            printf("Tempo gasto: %.2f segundos\n", (double)(end - start) / CLOCKS_PER_SEC);
+            salva(f, busca);        }
+        else{
+            printf("%d, nao encontrado\n", chave);
+        }
+        free(f);
+    }
+    imprime_arquivo(busca);
+    fclose(busca);
+}
 
 // Retorna tamanho do funcionario em bytes
 int tamanho_registro() {

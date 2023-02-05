@@ -8,8 +8,7 @@ typedef struct Funcionario {
     double salario;
 } TFunc;
 
-#define NUM_EMPLOYEES 5000
-#define MAX_ID 5000
+#define NUM_EMPLOYEES 100
 int id[NUM_EMPLOYEES];
 int is_unique;
 int comparisons;
@@ -20,9 +19,12 @@ TFunc *funcionario(int cod, char *nome, double salario);
 void salva(TFunc *func, FILE *out);
 TFunc *le(FILE *in);
 void le_funcionarios(FILE *in);
+void imprime_arquivo(FILE *arq);
 void imprime(TFunc *func);
 void insere_funcionarios(FILE *out);
 int tamanho_registro();
 int tamanho_arquivo(FILE *arq);
-void busca_funcionarios(FILE *out);
+void busca_funcionarios_sequencial(FILE *out);
 TFunc *busca_sequencial(FILE *busca, int chave);
+void busca_funcionarios_binario(FILE *out);
+TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim);

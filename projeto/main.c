@@ -4,8 +4,6 @@
 #include "funcionario.c"
 
 
-
-
 /* ############################ BUSCA BINARIA ############################ */
 
 //Arquivos devem estar ordenados
@@ -27,11 +25,22 @@ int main(int argc, char** argv) {
         int entrada=0;
         while(entrada!=5){
             printf("\n######## MENU ##########\n");
-            printf("[1] - busca sequencial\n[2] - busca binaria\n[3] - insertionSortMemoria\n[4] - InsertionSortDisco\n[5] - Sair\n");
+            printf("[1] - busca sequencial\n[2] - insertion sort disco\n[3] - busca binaria\n[4] - Sair\n");
             scanf("%d", &entrada);
             if(entrada==1){
-                busca_funcionarios(out);
-            }else if(entrada==5){
+                fflush(out);
+                busca_funcionarios_sequencial(out);
+            }else if(entrada==2){
+                fflush(out);
+                imprime_arquivo(out);
+                insertion_sort_disco(out, tamanho_arquivo(out));
+                printf("\n\nArquivo apos ordenacao...\n\n");
+                imprime_arquivo(out);
+            }else if(entrada==3){
+                printf("LEMBRE DE ESCOLHER UM METODO DE ORDENACAO ANTES\n");
+                busca_funcionarios_binario(out);
+            }
+            else if(entrada==5){
                 printf("Saindo....\n");
             }else{
                 printf("OPCAO INVALIDA\n");
