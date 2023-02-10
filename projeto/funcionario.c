@@ -94,7 +94,7 @@ void generate_unique_id() {
 void insere_funcionarios(FILE *out) {
     printf("Inserindo funcionarios no arquivo...");
     // Gerar nomes e salários aleatórios
-    char *nome[] = {"Maria", "João", "Carlos", "Ana", "Paulo", "Lucia"};
+    char *nome[] = {"Maria", "Jose", "Carlos", "Ana", "Paulo", "Lucia"};
     int num_names = sizeof(nome) / sizeof(nome[0]);
     double salario;
     generate_unique_id();
@@ -108,22 +108,31 @@ void insere_funcionarios(FILE *out) {
 }
 
 /* ############################ BUSCA SEQUENCIAL ############################ */
-TFunc *busca_sequencial(FILE *busca, int chave){
+/**
+ * Na busca sequencial, você precisa comparar o ID procurado com o ID de cada 
+ * funcionário, até encontrar o funcionário ou chegar ao final da lista. 
+ * Neste caso, o número de comparações é linear em relação ao número de funcionários.
+**/
+TFunc *busca_sequencial(FILE *out, int chave){
+    rewind(out);
     comparisons=0;
     TFunc *func = (TFunc *) malloc(sizeof(TFunc));
     int encontrado=0;
     start = clock();
-    for(int i=0; i<NUM_EMPLOYEES;i++){
+    //o arquivo é percorrido usando a função fread() e, para cada registro lido, é verificado se o ID corresponde ao ID procurado.
+    for(int i=0;i<NUM_EMPLOYEES; i++){
+        fread(func, tamanho_registro(), 1, out);
         comparisons++;
-        fseek(busca, i *sizeof(TFunc), SEEK_SET);
-        fread(func, sizeof(TFunc),1,busca);
         if(func->cod==chave){
             encontrado = 1;
-            end = clock();
-            return func;
+            break;
         }
     }
-    if(encontrado!=1){
+    end = clock();
+    if(encontrado){
+        return func;
+    }
+    else{
         return NULL;
     }
 }
@@ -133,16 +142,18 @@ void busca_funcionarios_sequencial(FILE *out){
     busca = fopen("busca.dat", "w+b");
     TFunc *f;
     int chave=0;
-    for(int i=0; i<50;i++){
+    for(int i=0; i<25;i++){
         chave = rand() % NUM_EMPLOYEES;
         f = busca_sequencial(out, chave);
         if(f!= NULL){
             imprime(f);
-            printf("\nQuantidade de comparacoes: %d\n", comparisons);
-            printf("Tempo gasto: %.2f segundos\n", (double)(end - start) / CLOCKS_PER_SEC);
-            salva(f, busca);        }
+            salva(f, busca);  
+            FILE *fp = fopen("busca.dat", "a"); //pra salvar no fim do arquivo
+            fprintf(fp, "\nQuantidade de comparacoes em funcionario cod %d: %d\n",f->cod, comparisons);
+            fprintf(fp, "Tempo gasto em funcionario cod %d: %.2f segundos\n", f->cod, (double)(end - start) / CLOCKS_PER_SEC);      
+        }
         else{
-            printf("%d, nao encontrado\n", chave);
+            printf("%d, \nnao encontrado\n", chave);
         }
         free(f);
     }
@@ -151,10 +162,20 @@ void busca_funcionarios_sequencial(FILE *out){
 }
 
 /*#################################### INSERTION SORT DISCO ####################################*/
+
 void insertion_sort_disco(FILE *arq, int tam) {
+    FILE *fp;
+    fp = fopen("resultados_ordenacao.txt", "w");
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 0;
+    }
     int i;
+    int comparacoes = 0;
+    clock_t tempo_inicial = clock();
     //faz o insertion sort
     for (int j = 2; j <= tam; j++) {
+        comparacoes++;
         //posiciona o arquivo no registro j
         fseek(arq, (j-1) * tamanho_registro(), SEEK_SET);
         TFunc *fj = le(arq);
@@ -175,12 +196,28 @@ void insertion_sort_disco(FILE *arq, int tam) {
         fseek(arq, (i) * tamanho_registro(), SEEK_SET);
         //salva registro j na posicao i
         salva(fj, arq);
+        clock_t tempo_final = clock();
+        float tempo_gasto = (float)(tempo_final - tempo_inicial) / CLOCKS_PER_SEC;
+        fprintf(fp, "Numero de comparacoes: %d\n", comparacoes);
+        fprintf(fp, "Tempo gasto: %f segundos\n", tempo_gasto);
     }
     //descarrega o buffer para ter certeza que dados foram gravados
     fflush(arq);
 }
 
+/*#################################### ORDENAÇÃO EXTERNA ####################################*/
+
+        
+
+
+
 /*#################################### BUSCA BINARIA ####################################*/
+
+/***
+ * A busca binária divide o vetor de funcionários em duas metades em cada iteração, 
+ * então o número de comparações necessárias para encontrar o funcionário é logarítmico em relação ao número de funcionários 
+ * na base de dados.
+ * ***/
 
 TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim) {
     comparisons=0;
@@ -213,14 +250,15 @@ void busca_funcionarios_binario(FILE *out){
     busca = fopen("busca.dat", "w+b");
     TFunc *f;
     int chave=0;
-    for(int i=0; i<50;i++){
+    for(int i=0; i<25;i++){
         chave = rand() % NUM_EMPLOYEES;
         f = busca_binaria(chave, out, 0, tamanho_arquivo(out)-1);
         if(f!= NULL){
             imprime(f);
-            printf("\nQuantidade de comparacoes: %d\n", comparisons);
-            printf("Tempo gasto: %.2f segundos\n", (double)(end - start) / CLOCKS_PER_SEC);
-            salva(f, busca);        }
+            salva(f, busca); 
+            FILE *fp = fopen("busca.dat", "a"); //pra salvar no fim do arquivo
+            fprintf(fp, "\nQuantidade de comparacoes no funcionario com id %d: %d\n", f->cod, comparisons);
+            fprintf(fp, "Tempo gasto no funcionario com id %d: %.2f segundos\n",f->cod, (double)(end - start) / CLOCKS_PER_SEC);       }
         else{
             printf("%d, nao encontrado\n", chave);
         }

@@ -1,7 +1,6 @@
 #include <math.h>
 #include <time.h>
 
-
 typedef struct Funcionario {
     int cod;
     char nome[50];
