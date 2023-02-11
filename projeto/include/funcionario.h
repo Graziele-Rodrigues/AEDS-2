@@ -7,10 +7,12 @@ typedef struct Funcionario {
     double salario;
 } TFunc;
 
+
 #define NUM_EMPLOYEES 100
 int id[NUM_EMPLOYEES];
 int is_unique;
 int comparisons;
+
 clock_t start, end;
 
 void generate_unique_id();
@@ -27,3 +29,4 @@ void busca_funcionarios_sequencial(FILE *out);
 TFunc *busca_sequencial(FILE *busca, int chave);
 void busca_funcionarios_binario(FILE *out);
 TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim);
+void ordenacao_por_substituicao(FILE *arquivo, int nFunc);

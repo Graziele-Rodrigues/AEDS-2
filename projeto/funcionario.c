@@ -201,15 +201,79 @@ void insertion_sort_disco(FILE *arq, int tam) {
         fprintf(fp, "Numero de comparacoes: %d\n", comparacoes);
         fprintf(fp, "Tempo gasto: %f segundos\n", tempo_gasto);
     }
+    fclose(fp);
     //descarrega o buffer para ter certeza que dados foram gravados
     fflush(arq);
 }
 
-/*#################################### ORDENAÇÃO EXTERNA ####################################*/
+/*#################################### PARTIÇÃO POR SUBSTITUIÇÃO ####################################*/
 
+
+/**
+ * Diferença codigo ordenacao por substituicao e classificacao interna
+ * O código classificacao_interna grava os funcionários ordenados em arquivos distintos, enquanto o código substituição grava os funcionários ordenados de volta no mesmo arquivo de entrada.
+ * O código "ordenacao_por_substituicao" realiza a ordenação de todos os registros do arquivo de uma só vez. Ele lê todos os registros de funcionários, coloca em um vetor, realiza a ordenação no vetor e escreve o resultado ordenado no arquivo.
+ * Já o código "classificacao_interna" divide o arquivo de registros de funcionários em pedaços (chamados de partições) e realiza a ordenação de cada partição separadamente. Cada partição é lida, ordenada e gravada em um arquivo separado. Ao final, todos os arquivos de partições serão mesclados em um único arquivo ordenado.
+*/
+void ordenacao_por_substituicao(FILE *arquivo, int nFunc) {
+    comparisons=0;
+    FILE *arq;
+    arq = fopen("resultados_substituicao.txt", "w");
+    if (arq == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 0;
+    }
+    rewind(arquivo);
+    int reg = 0;
+    clock_t tempo_inicial = clock();
+    while (reg != nFunc) {
+        // Lê o arquivo e coloca no vetor
+        TFunc *vetor[NUM_EMPLOYEES];
+        int i = 0;
+        while (!feof(arquivo)) {
+            fseek(arquivo, reg * tamanho_registro(), SEEK_SET);
+            vetor[i] = le(arquivo);
+            i++;
+            reg++;
+            if (i >= NUM_EMPLOYEES) break;
+        }
+
+        // Faz a ordenação
+        for (int j = 1; j < i; j++) {
+            comparisons++;
+            TFunc *f = vetor[j];
+            int k = j - 1;
+            while (k >= 0 && vetor[k]->cod > f->cod) {
+                vetor[k + 1] = vetor[k];
+                k--;
+            }
+            vetor[k + 1] = f;
+        }
+
+        // Grava os funcionários ordenados no arquivo
+        rewind(arquivo);
+        for (int j = 0; j < i; j++) {
+            fseek(arquivo, j * tamanho_registro(), SEEK_SET);
+            salva(vetor[j], arquivo);
+        }
+
+        // Libera a memória alocada para o vetor
+        for (int j = 0; j < i; j++) {
+            free(vetor[j]);
+        }
         
-
-
+        clock_t tempo_final = clock();
+        float tempo_gasto = (float)(tempo_final - tempo_inicial) / CLOCKS_PER_SEC;
+        printf("Numero de comparacoes: %d\n", comparisons);
+        printf("Tempo gasto: %f segundos\n", tempo_gasto);
+        fprintf(arq, "Numero de comparacoes: %d\n", comparisons);
+        fprintf(arq, "Tempo gasto: %f segundos\n", tempo_gasto);
+    }
+    fclose(arq);
+    printf("ARQUIVO APOS ORDENADO...\n");
+    imprime_arquivo(arquivo);
+}
+           
 
 /*#################################### BUSCA BINARIA ####################################*/
 
