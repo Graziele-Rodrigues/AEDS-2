@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funcionario.c"
-
+#include "lista.c"
 
 /* ############################ BUSCA BINARIA ############################ */
 
@@ -40,10 +40,18 @@ int main(int argc, char** argv) {
                 printf("\n\nArquivo apos ordenacao...\n\n");
                 imprime_arquivo(out);
             }else if(entrada==4){
-                ordenacao_por_substituicao(out, NUM_EMPLOYEES);
+                int M = 20;
+                char *nomes_arquivos_saida[] = {"particao1.dat", "particao2.dat", "particao3.dat"};
+                int num_arquivos = sizeof(nomes_arquivos_saida) / sizeof(char*);
+                lista_nomes_arquivos_saida = (Lista*) malloc(sizeof(Lista));
+                inicializa_lista(lista_nomes_arquivos_saida, nomes_arquivos_saida, num_arquivos);
+                ordenacao_por_substituicao("funcionario.dat", lista_nomes_arquivos_saida, M);
             }
             else if(entrada==5){
                 printf("Saindo....\n");
+            }else if(entrada==6){
+                printf("Saindo....\n");
+                break;
             }else{
                 printf("OPCAO INVALIDA\n");
             } 

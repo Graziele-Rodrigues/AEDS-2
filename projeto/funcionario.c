@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "include/funcionario.h"
+#include "include/lista.h"
 
 // Imprime funcionario
 void imprime(TFunc *func) {
@@ -215,6 +216,8 @@ void insertion_sort_disco(FILE *arq, int tam) {
  * O código "ordenacao_por_substituicao" realiza a ordenação de todos os registros do arquivo de uma só vez. Ele lê todos os registros de funcionários, coloca em um vetor, realiza a ordenação no vetor e escreve o resultado ordenado no arquivo.
  * Já o código "classificacao_interna" divide o arquivo de registros de funcionários em pedaços (chamados de partições) e realiza a ordenação de cada partição separadamente. Cada partição é lida, ordenada e gravada em um arquivo separado. Ao final, todos os arquivos de partições serão mesclados em um único arquivo ordenado.
 */
+
+/**
 void ordenacao_por_substituicao(FILE *arquivo, int nFunc) {
     comparisons=0;
     FILE *arq;
@@ -272,8 +275,126 @@ void ordenacao_por_substituicao(FILE *arquivo, int nFunc) {
     fclose(arq);
     printf("ARQUIVO APOS ORDENADO...\n");
     imprime_arquivo(arquivo);
+}*/
+
+
+void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquivos_saida, int M) {
+    FILE * arq;  //ponteiro para abrir arquivo
+    int fim = 0;
+
+    //abre arquivo
+    if ((arq = fopen(nome_arquivo_entrada, "rb")) == NULL) {
+        printf("Error opening input file\n");
+    } else {
+        int i = 0;
+        //Ler primeiro funcionario
+        TFunc *func = le(arq);
+
+        TFunc *v[M]; //vetor que vai guardar funcionarios em cada particao
+        int frozens[M]; //descongelar
+        for (i = 0; i < M; i++) {
+            frozens[i] = 0;
+        }
+
+        //Ler M registros do arquivo para a memória
+        i = 0;
+        while (!feof(arq) && i < M) {
+            v[i] = func;
+            func = le(arq);
+            i++;
+        }
+
+        //ajusta M se o arquivo de entrada terminou antes de preencher o array v
+        if (i != M) {
+            M = i;
+        }
+
+        int n_frozen = 0;
+        TFunc *menor;
+        // Loop enquanto ainda tem registro descongelados
+        // Precisa de um loop aqui para abrir nova partição
+        // Abre partição para escrever
+        while (!fim) {
+            char *nome_particao = nome_arquivos_saida->nome;
+            nome_arquivos_saida = nome_arquivos_saida->prox;
+            FILE *p;
+            printf("\n%s\n", nome_particao);
+            //int n = 0;
+
+                if ((p = fopen(nome_particao, "wb")) == NULL) {
+                    printf("Error creating output partition\n");
+                } else {
+                while (M - n_frozen > 0) {
+                    //find the record with the smallest key
+                    i = 0;
+                    int ind_min = 0; //indice minimo
+                    while (v[i] == NULL || frozens[i] == 1) {
+                        ind_min++; //incrementa indice minimo
+                        i++;
+                    }
+                    for (int j = 0; j < M; j++) {
+                        if(v[j] == NULL) {
+                            continue;
+                        }
+                        if (v[j]->cod < v[ind_min]->cod && frozens[j] == 0) {
+                            ind_min = j;
+                        }
+                    }
+                    menor = v[ind_min];
+
+                    imprime(menor);
+                    //fseek(p, (n) * tamanho_registro(), SEEK_SET);
+                    salva(menor, p);
+                    //n++;
+
+                    if (func != NULL) {
+                        v[ind_min] = func;
+                        func = le(arq);
+                    } else {
+                        v[ind_min] = NULL;
+                        n_frozen++;
+                    }
+
+                    //replace the record with the smallest key with the next record from input file
+                    if (v[ind_min] != NULL) {
+                        if (v[ind_min]->cod < menor->cod) {
+                            frozens[ind_min] = 1;
+                            n_frozen++;
+                        }
+                        continue;
+                    }
+                }
+            }
+            //close output partition
+            fclose(p);
+            //unfreeze frozen records
+            for (i = 0; i < M; i++) {
+                if(v[i] == NULL)
+                    continue;
+                frozens[i] = 0;
+                n_frozen--;
+            }
+
+            if (feof(arq) && n_frozen == M) {
+                fim = 1;
+            }
+        }
+    }
 }
-           
+
+/*#################################### INTERCALAÇÃO ÓTIMA ####################################*/
+
+/***
+ * A intercalação ótima é uma técnica de ordenação de arquivos externa que combina duas ou mais partições ordenadas de tamanho relativamente pequeno em uma única partição ordenada. 
+ * 1 - Inicialize as variáveis: Inicialize variáveis como o número de arquivos abertos, o índice do arquivo atual e o registro lido de cada arquivo.
+ * 2 - Encontrar o registro com a menor chave: Encontre o registro com a menor chave entre todos os registros disponíveis na memória.
+ * 3 - Salvar o registro: Salve o registro com a menor chave no arquivo de saída.
+ * 4 - Lê o próximo registro: Leia o próximo registro do arquivo que forneceu o registro com a menor chave.
+ * 5 - Repita os passos 3 a 5 até que todos os arquivos de entrada tenham sido lidos.
+ * 6 - Fechar o arquivo de saída: Quando todos os arquivos de entrada tiverem sido lidos e mesclados, feche o arquivo de saída.
+*/    
+
+
 
 /*#################################### BUSCA BINARIA ####################################*/
 
