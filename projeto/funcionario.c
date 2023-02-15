@@ -394,6 +394,82 @@ void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquiv
  * 6 - Fechar o arquivo de saída: Quando todos os arquivos de entrada tiverem sido lidos e mesclados, feche o arquivo de saída.
 */    
 
+void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrada2, char * nome_arquivo_entrada3, char * nome_arquivo_saida) {
+    FILE * arq1;
+    FILE * arq2;
+    FILE * arq3;
+    FILE * arq_saida;
+
+    //abre os arquivos de entrada
+    if ((arq1 = fopen(nome_arquivo_entrada1, "r+b")) == NULL) {
+        printf("Erro ao abrir arq1\n");
+    }
+    if ((arq2 = fopen(nome_arquivo_entrada2, "r+b")) == NULL) {
+        printf("Erro ao abrir arq2\n");
+    }
+    if ((arq3 = fopen(nome_arquivo_entrada3, "r+b")) == NULL) {
+        printf("Erro ao abrir arq3\n");
+    }
+
+    //abre o arquivo de saida
+    if ((arq_saida = fopen(nome_arquivo_saida, "w+b")) == NULL) {
+        printf("Erro ao abrir arquivo saida\n");
+    }
+
+    //le o primeiro funcionario de cada arquivo de entrada
+    TFunc *func1 = le(arq1);
+    TFunc *func2 = le(arq2);
+    TFunc *func3 = le(arq3);
+
+    TFunc *menor;
+
+    //loop para escrever no arquivo de saida
+    while (func1 != NULL || func2 != NULL || func3 != NULL) {
+        //encontra o funcionario com a menor chave
+        if (func1 != NULL && func2 != NULL && func3 != NULL) {
+            if (func1->cod <= func2->cod && func1->cod <= func3->cod) {
+                menor = func1;
+                func1 = le(arq1);
+            } else if (func2->cod <= func1->cod && func2->cod <= func3->cod) {
+                menor = func2;
+                func2 = le(arq2);
+            } else {
+                menor = func3;
+                func3 = le(arq3);
+            }
+        } else if (func1 != NULL && func2 != NULL) {
+            if (func1->cod <= func2->cod) {
+                menor = func1;
+                func1 = le(arq1);
+            } else {
+                menor = func2;
+                func2 = le(arq2);
+            }
+        } else if (func1 != NULL && func3 != NULL) {
+            if (func1->cod <= func3->cod) {
+                menor = func1;
+                func1 = le(arq1);
+            } else {
+                menor = func3;
+                func3 = le(arq3);
+            }
+        } else if (func2 != NULL && (func1 == NULL || func2->cod < func1->cod)) {
+            menor = func2;
+            func2 = le(arq2);
+        } else {
+            menor = func1;
+            func1 = le(arq1);
+        }
+        imprime(menor);
+        salva(menor, arq_saida);
+        }
+        // fecha arquivo de saída
+        fclose(arq_saida);
+         // fecha arquivos de entrada
+        fclose(arq1);
+        fclose(arq2);
+        fclose(arq3);
+    }
 
 
 /*#################################### BUSCA BINARIA ####################################*/

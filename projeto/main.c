@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
                 ordenacao_por_substituicao("funcionario.dat", lista_nomes_arquivos_saida, M);
             }
             else if(entrada==5){
-                printf("Saindo....\n");
+                intercalacao_otima("particao1.dat", "particao2.dat", "particao3.dat", "funcionario.dat");
             }else if(entrada==6){
                 printf("Saindo....\n");
                 break;

@@ -32,3 +32,4 @@ void busca_funcionarios_binario(FILE *out);
 TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim);
 void insertion_sort_disco(FILE *arq, int tam);
 void ordenacao_por_substituicao(char *nome_arquivo_entrada, Lista *nome_arquivos_saida, int M);
+void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrada2, char * nome_arquivo_entrada3, char * nome_arquivo_saida);
