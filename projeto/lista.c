@@ -25,3 +25,27 @@ void inicializa_lista(Lista *lista, char *nomes[], int num_arquivos) {
         }
     }
 }
+
+
+
+//conta num elemento da lista encadeada
+int num_elementos_lista(Lista *lista) {
+    int count = 0;
+    Lista *atual = lista;
+    while (atual != NULL) {
+        count++;
+        atual = atual->prox;
+    }
+    return count;
+}
+
+//percorre os elementos de uma lista encadeada e executa uma função para cada elemento:
+void percorre_lista(Lista *lista, void (*funcao)(char *)) {
+    Lista *atual = lista;
+    while (atual != NULL) {
+        funcao(atual->nome);
+        atual = atual->prox;
+    }
+}
+
+

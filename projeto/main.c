@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
         insere_funcionarios(out);
         le_funcionarios(out);
         int entrada=0;
-        while(entrada!=5){
+        while(entrada!=6){
             printf("\n######## MENU ##########\n");
             printf("[1] - busca sequencial\n[2] - busca binaria\n[3] - insertion sort disco\n[4] - ordenacao substituicao\n[5] - intercalacao otima\n[6] - Sair\n");
             scanf("%d", &entrada);
@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
             }
             else if(entrada==5){
                 intercalacao_otima("particao1.dat", "particao2.dat", "particao3.dat", "funcionario.dat");
+
             }else if(entrada==6){
                 printf("Saindo....\n");
                 break;

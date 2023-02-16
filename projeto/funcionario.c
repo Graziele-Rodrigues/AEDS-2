@@ -166,7 +166,7 @@ void busca_funcionarios_sequencial(FILE *out){
 
 void insertion_sort_disco(FILE *arq, int tam) {
     FILE *fp;
-    fp = fopen("resultados_ordenacao.txt", "w");
+    fp = fopen("resultados_insertion_sort.txt", "w");
     if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return 0;
@@ -279,9 +279,17 @@ void ordenacao_por_substituicao(FILE *arquivo, int nFunc) {
 
 
 void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquivos_saida, int M) {
+    FILE *fp;
+    fp = fopen("resultados_particoes.txt", "w");
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 0;
+    }
     FILE * arq;  //ponteiro para abrir arquivo
     int fim = 0;
 
+    int comparacoes = 0;
+    clock_t tempo_inicial = clock();
     //abre arquivo
     if ((arq = fopen(nome_arquivo_entrada, "rb")) == NULL) {
         printf("Error opening input file\n");
@@ -302,11 +310,13 @@ void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquiv
             v[i] = func;
             func = le(arq);
             i++;
+            comparacoes++;
         }
 
         //ajusta M se o arquivo de entrada terminou antes de preencher o array v
         if (i != M) {
             M = i;
+            comparacoes++;
         }
 
         int n_frozen = 0;
@@ -339,6 +349,7 @@ void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquiv
                         if (v[j]->cod < v[ind_min]->cod && frozens[j] == 0) {
                             ind_min = j;
                         }
+                        comparacoes++;
                     }
                     menor = v[ind_min];
 
@@ -378,6 +389,11 @@ void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquiv
             if (feof(arq) && n_frozen == M) {
                 fim = 1;
             }
+
+            clock_t tempo_final = clock();
+            float tempo_gasto = (float)(tempo_final - tempo_inicial) / CLOCKS_PER_SEC;
+            fprintf(fp, "Numero de comparacoes: %d\n", comparacoes);
+            fprintf(fp, "Tempo gasto: %f segundos\n", tempo_gasto);
         }
     }
 }
@@ -394,11 +410,19 @@ void ordenacao_por_substituicao(char * nome_arquivo_entrada, Lista * nome_arquiv
  * 6 - Fechar o arquivo de saída: Quando todos os arquivos de entrada tiverem sido lidos e mesclados, feche o arquivo de saída.
 */    
 
+
 void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrada2, char * nome_arquivo_entrada3, char * nome_arquivo_saida) {
     FILE * arq1;
     FILE * arq2;
     FILE * arq3;
     FILE * arq_saida;
+
+    FILE *fp;
+    fp = fopen("resultados_intercalacao.txt", "w");
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 0;
+    }
 
     //abre os arquivos de entrada
     if ((arq1 = fopen(nome_arquivo_entrada1, "r+b")) == NULL) {
@@ -423,6 +447,9 @@ void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrad
 
     TFunc *menor;
 
+    int comparacoes = 0;
+    clock_t tempo_inicial = clock();
+
     //loop para escrever no arquivo de saida
     while (func1 != NULL || func2 != NULL || func3 != NULL) {
         //encontra o funcionario com a menor chave
@@ -430,38 +457,53 @@ void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrad
             if (func1->cod <= func2->cod && func1->cod <= func3->cod) {
                 menor = func1;
                 func1 = le(arq1);
+                comparacoes++;
             } else if (func2->cod <= func1->cod && func2->cod <= func3->cod) {
                 menor = func2;
                 func2 = le(arq2);
+                comparacoes++;
             } else {
                 menor = func3;
                 func3 = le(arq3);
+                comparacoes++;
             }
         } else if (func1 != NULL && func2 != NULL) {
             if (func1->cod <= func2->cod) {
                 menor = func1;
                 func1 = le(arq1);
+                comparacoes++;
+
             } else {
                 menor = func2;
                 func2 = le(arq2);
+                comparacoes++;
             }
         } else if (func1 != NULL && func3 != NULL) {
             if (func1->cod <= func3->cod) {
                 menor = func1;
                 func1 = le(arq1);
+                comparacoes++;
+
             } else {
                 menor = func3;
                 func3 = le(arq3);
+                comparacoes++;
             }
         } else if (func2 != NULL && (func1 == NULL || func2->cod < func1->cod)) {
             menor = func2;
             func2 = le(arq2);
+            comparacoes++;
         } else {
             menor = func1;
             func1 = le(arq1);
+            comparacoes++;
         }
         imprime(menor);
         salva(menor, arq_saida);
+        clock_t tempo_final = clock();
+        float tempo_gasto = (float)(tempo_final - tempo_inicial) / CLOCKS_PER_SEC;
+        fprintf(fp, "Numero de comparacoes: %d\n", comparacoes);
+        fprintf(fp, "Tempo gasto: %f segundos\n", tempo_gasto);
         }
         // fecha arquivo de saída
         fclose(arq_saida);
@@ -469,7 +511,11 @@ void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrad
         fclose(arq1);
         fclose(arq2);
         fclose(arq3);
-    }
+}
+
+    
+
+   
 
 
 /*#################################### BUSCA BINARIA ####################################*/
