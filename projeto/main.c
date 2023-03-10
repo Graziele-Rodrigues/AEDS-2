@@ -4,10 +4,6 @@
 #include "funcionario.c"
 #include "lista.c"
 
-/* ############################ BUSCA BINARIA ############################ */
-
-//Arquivos devem estar ordenados
-
 
 /* ############################ MAIN ############################ */
 
