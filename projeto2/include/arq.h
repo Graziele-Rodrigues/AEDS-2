@@ -2,10 +2,6 @@
 #define ARQ_H
 
 #include "arvore.h"
-#include "arqProfissional.h"
-#include "menu.h"
-#include "profissional.h"
-
 #define arquivoArvore "arvore.bin"
 
 struct Cab {

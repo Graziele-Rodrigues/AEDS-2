@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arq.h"
-#include "arqProfissional.h"
-#include "menu.h"
-#include "profissional.h"
 
 //define a ordem da árvore e em qual arquivo será salva
 #define arquivoArvore "arvore.bin" 
@@ -64,7 +60,7 @@ int insereCodigo(FILE* arq, int pos, AuxNo* auxNo);
 // Imprime os dados de todos os profissionais daquela árvore
 // Pré-condição: um ponteiro para arquivo e a posição da raiz
 // Pós-condição: nenhuma
-void mostraProfissionais(FILE* arq, int pos);
+void mostraFuncionarios(FILE* arq, int pos);
 
 // Busca a posição de um código na sub-árvore
 // Pré-condição: um ponteiro para arquivo, a posição da raiz e o código a ser buscado

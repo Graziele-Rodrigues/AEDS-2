@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "include/arvore.h"
+#include "include/arq.h"
+#include "include/funcionario.h"
 
 
 // Verifica se existe um arquivo de árvore, caso não exista cria e adiciona o cabeçalho
@@ -208,17 +210,17 @@ int insereCodigo(FILE* arq, int pos, AuxNo* auxNo) {
 // Imprime os dados de todos os profissionais daquela árvore
 // Pré-condição: um ponteiro para arquivo e a posição da raiz
 // Pós-condição: nenhuma
-void mostraProfissionais(FILE* arq, int pos) {
+void mostraFuncionarios(FILE* arq, int pos) {
   if (pos == -1) {
     return;
   }
 	int i;
   No* no = leNoArquivo(arq, pos);
   for(i = 0; i < no->numChaves; i++) {
-    mostraProfissionais(arq, no->filho[i]);
-    mostrarProfissionalPorPos(no->posDado[i]);
+    mostraFuncionarios(arq, no->filho[i]);
+    mostrarFuncionarioPorPos(no->posDado[i]);
   }
-  mostraProfissionais(arq, no->filho[no->numChaves]);
+  mostraFuncionarios(arq, no->filho[no->numChaves]);
 }
 
 // Busca a posição de um código na sub-árvore
@@ -276,7 +278,7 @@ int removeCodigo(FILE* arq, int pos, int codigo, int posPai, int desceDireita) {
 		
     for (i = 0; i < no->numChaves; i++) {
       if (codigo == no->chave[i]) {
-        removerProfissional(no->posDado[i]);
+        removerFuncionario(no->posDado[i]);
       }
       if (codigo <= no->chave[i]) {
         no->posDado[i] = no->posDado[i + 1];
@@ -316,7 +318,7 @@ int removeCodigo(FILE* arq, int pos, int codigo, int posPai, int desceDireita) {
 
     if (codigo == no->chave[i]) {
       //deletar no meio da arvore;
-      removerProfissional(no->posDado[i]);
+      removerFuncionario(no->posDado[i]);
 
       AuxNo* auxNo = maiorCodigo(arq, no->filho[i]);
       no->chave[i] = auxNo->codigo;

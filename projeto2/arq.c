@@ -3,6 +3,8 @@
 #include <string.h>
 
 #include "include/arq.h"
+#include "include/arvore.h"
+
 
 // Lê o cabeçalho do arquivo e o armazena na memória
 // Pré-condição: ponteiro válido para o arquivo

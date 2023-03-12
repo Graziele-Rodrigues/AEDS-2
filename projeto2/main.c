@@ -4,7 +4,9 @@
 
 #include "menu.c"
 #include "arvore.c"
-#include "arqProfissional.c"
+#include "arqFuncionario.c"
+#include "arq.c"
+#include "funcionario.c"
 
 int main() {
   iniciarArvore(); //arvore.bin
