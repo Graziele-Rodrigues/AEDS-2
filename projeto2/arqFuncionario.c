@@ -26,18 +26,18 @@ void iniciaArquivo(){
 	fclose(arq);
 }
 
-// Escreve os dados de um profissional em determinada posição do arquivo
-// Pré-condição: ter um arquivo aberto, uma posição e um profissional 
-// Pós-condição: os dados do profissional serão escritos no arquivo
+// Escreve os dados de um funcionario em determinada posição do arquivo
+// Pré-condição: ter um arquivo aberto, uma posição e um funcionario 
+// Pós-condição: os dados do funcionario serão escritos no arquivo
 void escreveFuncionarioArq(FILE* arq, Funcionario* funcionario, int pos) {
 	fseek(arq, 0, SEEK_SET); //posiciona no in ́ıcio do arquivo
   fseek(arq, sizeof(CabFuncionario) + pos * sizeof(Funcionario), SEEK_SET);
   fwrite(funcionario, sizeof(Funcionario), 1, arq);
 }
 
-// Lê os dados de um profissional em determinada posição do arquivo
+// Lê os dados de um funcionario em determinada posição do arquivo
 // Pré-condição: ter um arquivo aberto, uma posição
-// Pós-condição: retornará um profissional com os dados lidos do arquivo
+// Pós-condição: retornará um funcionario com os dados lidos do arquivo
 Funcionario* leFuncionarioArq(FILE* arq, int pos){
 	Funcionario* x = malloc(sizeof(Funcionario));
 	fseek(arq, 0, SEEK_SET);	

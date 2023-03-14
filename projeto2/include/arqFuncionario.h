@@ -21,14 +21,14 @@ typedef struct CabecalhoFuncionario{
 // Pós-condição: caso não exista o arquivo será criado
 void iniciaArquivo();
 
-// Escreve os dados de um profissional em determinada posição do arquivo
-// Pré-condição: ter um arquivo aberto, uma posição e um profissional 
-// Pós-condição: os dados do profissional serão escritos no arquivo
+// Escreve os dados de um funcionario em determinada posição do arquivo
+// Pré-condição: ter um arquivo aberto, uma posição e um funcionario 
+// Pós-condição: os dados do funcionario serão escritos no arquivo
 void escreveFuncionarioArq(FILE* arq, Funcionario* funcionario, int pos);
 
-// Lê os dados de um profissional em determinada posição do arquivo
+// Lê os dados de um funcionario em determinada posição do arquivo
 // Pré-condição: ter um arquivo aberto, uma posição
-// Pós-condição: retornará um profissional com os dados lidos do arquivo
+// Pós-condição: retornará um funcionario com os dados lidos do arquivo
 Funcionario* leFuncionarioArq(FILE* arq, int pos);
 
 // Lê o cabeçalho do arquivo de dados

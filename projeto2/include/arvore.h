@@ -18,7 +18,7 @@ typedef struct no {
 } No;
 
 typedef struct auxNo {
-	int codigo; //codigo do profissional
+	int codigo; //codigo do funcionario
   int posDado; //posicao do dado no arquivo
 } AuxNo;
 
@@ -54,10 +54,10 @@ int split(FILE* arq, No* no, AuxNo* auxNo);
 
 // Insere um código na árvore
 // Pré-condição: um ponteiro para arquivo, a posição que será inserido e um ponteiro para um auxiliar de no
-// Pós-condição: é inserido o codigo na árvore e retorna a psoição
+// Pós-condição: é inserido o codigo na árvore e retorna a posição
 int insereCodigo(FILE* arq, int pos, AuxNo* auxNo);
 
-// Imprime os dados de todos os profissionais daquela árvore
+// Imprime os dados de todos os funcionarios daquela árvore
 // Pré-condição: um ponteiro para arquivo e a posição da raiz
 // Pós-condição: nenhuma
 void mostraFuncionarios(FILE* arq, int pos);
@@ -72,9 +72,9 @@ int posDado(FILE* arq, int pos, int codigo);
 // Pós-condição: retorna o maior código naquela sub-árvore
 AuxNo* maiorCodigo(FILE* arq, int pos);
 
-// Remove um profissional da árvore
-// Pré-condição: ponteiro para arquivo, posição do profissional na árvore, código do profissional a ser removido, posição do pai na árvore e um valor que determina se há mais nós a direita
-// Pós-condição: será removido da árvore o código do profissional e a árvore será ajustada para que continue balanceada
+// Remove um funcionario da árvore
+// Pré-condição: ponteiro para arquivo, posição do funcionario na árvore, código do funcionario a ser removido, posição do pai na árvore e um valor que determina se há mais nós a direita
+// Pós-condição: será removido da árvore o código do funcionario e a árvore será ajustada para que continue balanceada
 int removeCodigo(FILE* arq, int pos, int codigo, int posPai,int desceDireita);
 
 // Verifica a altura da árvore

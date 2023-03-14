@@ -207,7 +207,7 @@ int insereCodigo(FILE* arq, int pos, AuxNo* auxNo) {
   }
 }
 
-// Imprime os dados de todos os profissionais daquela árvore
+// Imprime os dados de todos os funcionarios daquela árvore
 // Pré-condição: um ponteiro para arquivo e a posição da raiz
 // Pós-condição: nenhuma
 void mostraFuncionarios(FILE* arq, int pos) {
@@ -259,9 +259,9 @@ AuxNo* maiorCodigo(FILE* arq, int pos) {
   }
 }
 
-// Remove um profissional da árvore
-// Pré-condição: ponteiro para arquivo, posição do profissional na árvore, código do profissional a ser removido, posição do pai na árvore e um valor que determina se há mais nós a direita
-// Pós-condição: será removido da árvore o código do profissional e a árvore será ajustada para que continue balanceada
+// Remove um funcionario da árvore
+// Pré-condição: ponteiro para arquivo, posição do funcionario na árvore, código do funcionario a ser removido, posição do pai na árvore e um valor que determina se há mais nós a direita
+// Pós-condição: será removido da árvore o código do funcionario e a árvore será ajustada para que continue balanceada
 int removeCodigo(FILE* arq, int pos, int codigo, int posPai, int desceDireita) {
   No* no = leNoArquivo(arq, pos);
 	int i, j, k;

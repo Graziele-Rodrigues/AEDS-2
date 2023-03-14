@@ -74,9 +74,9 @@ void menuEntrada(){
   }
 }
 
-// Insere um profissional na árvore
-// Pré-condição: ter uma struct de profissional com os dados que o código não existir na árvore
-// Pós-condição: o profissional será adicionado a árvore
+// Insere um funcionario na árvore
+// Pré-condição: ter uma struct de funcionario com os dados que o código não existir na árvore
+// Pós-condição: o funcionario será adicionado a árvore
 void insereFuncionario(Funcionario* funcionario){
   FILE *arq = fopen(arquivoArvore, "rb+");
   Cab *cab = leCab(arq);
@@ -100,9 +100,9 @@ void insereFuncionario(Funcionario* funcionario){
   fclose(arq);
 }
 
-// Remove um profissional na árvore a partir de um código que esteja presente na árvore
-// Pré-condição: ter o código de um profissional que exista na árvore
-// Pós-condição: o profissional será removido da árvore
+// Remove um funcionario na árvore a partir de um código que esteja presente na árvore
+// Pré-condição: ter o código de um funcionario que exista na árvore
+// Pós-condição: o funcionario será removido da árvore
 void removeFuncionario(int codigo){
   FILE *arq = fopen(arquivoArvore, "rb+");
   Cab *cab = leCab(arq);
@@ -122,31 +122,11 @@ void removeFuncionario(int codigo){
   fclose(arq);
 }
 
-/*
-// Altera o endereço e/ou telefone de um determinado profissional
-// Pré-condição: ter o código de um profissional que exista na árvore, o novo endereço e/ou telefone e o que será alterado endereço e/ou telefone
-// Pós-condição: será alterado o endereço e/ou telefone do profissional
-void alteraProfissional(int codigo, char* endereco, char* telefone, int tEnd, int tTel){
-  FILE *arq = fopen(arquivoArvore, "rb+");
-  Cab *cab = leCab(arq);
-  int posProfissional = posDado(arq,cab->raiz,codigo);
-  fclose(arq);
-	
-  if(posProfissional == -1){
-    printf("\n\nEsse profissional nao existe no sistema, alteracao cancelada.\n");
-    return;
-  }
-	
-	if(tEnd) 
-		editarEndereco(posProfissional, endereco);
-	if(tTel) 
-		editarTelefone(posProfissional, telefone);
-}*/
 
 
-// Lê os dados e insere um profissional
+// Lê os dados e insere um funcionario
 // Pré-condição: o código não existir na árvore
-// Pós-condição: o profissional será adicionado a árvore
+// Pós-condição: o funcionario será adicionado a árvore
 
 void generate_unique_id() {
     for (int i = 0; i < NUM_EMPLOYEES; i++) {
@@ -180,9 +160,9 @@ void inserir(){
   printf("\nFuncionarios adicionados com sucesso!\n\n");
 }
 
-// Remove um profissional da árvore
+// Remove um funcionario da árvore
 // Pré-condição: o código existir na árvore
-// Pós-condição: o profissional será removido da árvore
+// Pós-condição: o funcionario será removido da árvore
 void remover(){
   printf("\nRemover um funcionario\n");
   printf("Insera o codigo a ser removido: \n");
@@ -195,44 +175,6 @@ void remover(){
 	printf("\nFuncionario removido com sucesso!\n\n");
 }
 
-/*
-
-// Altera o endereço de um determinado profissional
-// Pré-condição: o código existir na árvore
-// Pós-condição: será alterado o endereço do profissional
-void alterarEndereco(){
-  printf("\nAlterar endereco de um profissional\n");
-  printf("Insira os dados a seguir: \n");
-
-  int codigo; char endereco[16];
-  printf("Codigo: ");
-  scanf("%d%*c",&codigo);
-  printf("Novo endereco: ");
-  scanf("%[^\n]%*c", endereco);
-	
-  alteraProfissional(codigo, endereco, NULL, 1, 0);
-
-  printf("\Endereco alterado com sucesso!\n");
-}
-
-// Altera o telefone de um determinado profissional
-// Pré-condição: o código existir na árvore
-// Pós-condição: será alterado o telefone do profissional
-void alterarTelefone(){
-  printf("\nAlterar telefone de um profissional\n");
-  printf("Insira os dados a seguir: \n");
-
-  int codigo; char telefone[16];
-  printf("Codigo: ");
-  scanf("%d%*c",&codigo);
-  printf("Novo telefone: ");
-  scanf("%[^\n]%*c", telefone);
-	
-  alteraProfissional(codigo, NULL, telefone, 0, 1);
-
-  printf("\nTelefone alterado com sucesso!\n");
-}
-*/
 
 // Remove um determinado caracter do vetor
 // Pré-condição: ter um vetor e uma posição que será removida
@@ -264,73 +206,9 @@ void removeBrancos(char linha[]){
   fim[1] = '\0';
 }
 
-/*
-// Determina se o que foi lido para alteração é endereço ou telefone
-// Pré-condição: ter um vetor de caracteres
-// Pós-condição: retornará 0 caso seja um endereço e 1 se for telefone
-int ehTelefone(char endereco[]){
-	int i;
-	for(i=0; endereco[i]; i++)
-		if(!isdigit(endereco[i]))
-			return 0;
-	return 1;
-}*/
 
-/*
-// Executa as operações de inserção, remoção e alteração lidas de um arquivo de texto
-// Pré-condição: ter um arquivo de texto válido
-// Pós-condição: será executado o que foi determinado pelo arquivo
-void carregarArq(){
-	char nomeArq[100];
-  printf("\nCarregar informacoes de arquivo texto\n");
-  printf("Insira o nome do arquivo de texto: \n");
-	scanf("%*c%[^\n]%*c", nomeArq);
-	printf("\n");
-	
-  FILE *arq = fopen(nomeArq, "r");
-  char linha[300];
-
-	while(fscanf(arq, "%[^\n]%*c", linha) != EOF) {
-		removeBrancos(linha);
-    char* token = strtok(linha, ";");
-		
-    if(strcmp(token,"I") == 0){
-      int codigo = atoi(strtok(NULL, ";"));
-      char* nome = strtok(NULL, ";");
-      char* cpf = strtok(NULL, ";");
-      char* registro = strtok(NULL, ";");
-      char* endereco = strtok(NULL, ";");
-			char* telefone = strtok(NULL, ";");
-			Profissional* profissional = criarProfissional(codigo, nome, cpf, registro, endereco, telefone);
-			insereProfissional(profissional);
-			free(profissional);
-		}
-		
-    if(strcmp(token,"R") == 0){
-      int codigo = atoi(strtok(NULL, ";"));
-      removeProfissional(codigo);
-    }
-
-    if(strcmp(token,"A") == 0){
-			int temEndereco=0, temTelefone=0;
-      int codigo = atoi(strtok(NULL, ";"));
-      char* endereco = strtok(NULL, ";");
-      char* telefone = strtok(NULL, ";");
-			if(telefone != NULL) temEndereco = temTelefone = 1;
-			else if(ehTelefone(endereco)){
-				telefone = endereco;
-				endereco = NULL;
-				temTelefone = 1;
-			}
-			else temEndereco = 1;
-			alteraProfissional(codigo, endereco, telefone, temEndereco, temTelefone);
-		}
-  }
-  fclose(arq);
-}*/
-
-// Imprime os dados de um profissional
-// Pré-condição: o profissional estar na árvore
+// Imprime os dados de um funcionario
+// Pré-condição: o funcionario estar na árvore
 // Pós-condição: nenhuma
 void mostrar(){  
   printf("\nMostrar um funcionario\n");
@@ -353,7 +231,7 @@ void mostrar(){
   mostrarFuncionarioPorPos(posFuncionario);
 }
 
-// Imprime os dados de todos os profissional presentes na árvore
+// Imprime os dados de todos os funcionarios presentes na árvore
 // Pré-condição: nenhuma
 // Pós-condição: nenhuma 
 void listarCodigos(){

@@ -2,6 +2,7 @@
 #define ARQ_H
 
 #include "arvore.h"
+
 #define arquivoArvore "arvore.bin"
 
 struct Cab {
