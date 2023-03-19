@@ -11,7 +11,7 @@
 #define ORDEM 5
 
 typedef struct no {
-  int posDado[ORDEM]; // posicao do profissional no aquivo de profissionais
+  int posDado[ORDEM]; // posicao do profissional no aquivo de funcionario
   int chave[ORDEM]; 
   int filho[ORDEM +1]; 
   int numChaves; 

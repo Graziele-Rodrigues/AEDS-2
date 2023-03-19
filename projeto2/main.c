@@ -10,7 +10,7 @@
 
 int main() {
   iniciarArvore(); //arvore.bin
-  iniciaArquivo(); //profissional.bin
+  iniciaArquivo(); //funcionario.bin
   menuEntrada();
 
   return 0;
