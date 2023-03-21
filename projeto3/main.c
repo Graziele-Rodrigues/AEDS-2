@@ -21,11 +21,29 @@ int hash(int mat, int tam) {
     return mat % tam;
 }
 
+// Retorna tamanho do funcionario em bytes
+int tamanho_registro() {
+    return sizeof(int)  //cod
+           + sizeof(char) * 50 //nome
+           + sizeof(double); //salario
+}
+
 void inicializa(Hash *tab, int m) {
     int i;
     for (i = 0; i < m; i++) {
         tab[i] = NULL;
     }
+}
+
+TFuncionario *le(FILE *in) {
+    TFuncionario *func = (TFuncionario *) malloc(sizeof(TFuncionario));
+    if (0 >= fread(&func->cod, sizeof(int), 1, in)) {
+        free(func);
+        return NULL;
+    }
+    fread(func->nome, sizeof(char), sizeof(func->nome), in);
+    fread(&func->salario, sizeof(double), 1, in);
+    return func;
 }
 
 TFuncionario *busca(Hash *tab, int m, int mat) {
@@ -46,25 +64,31 @@ TFuncionario *aloca(int mat, char nome[], double salario) {
     return novo;
 }
 
-void insereFuncionario(Hash *tab, int m, TFuncionario* funcionario) {
-    int h = hash(funcionario->cod, m);
-    TFuncionario *p = tab[h];
-    TFuncionario *ant = NULL;
-    while ((p != NULL) && (p->cod != funcionario->cod)) {
-        ant = p;
-        p = p->prox;
-    }
-    if (p != NULL) {
-        strcpy(p->nome, funcionario->nome);
-        p->salario = funcionario->salario;
-    } else {
-        TFuncionario *novo = aloca(funcionario->cod, funcionario->nome, funcionario->salario);
-        if (!ant) {
-            tab[h] = novo;
+void insereFuncionarioArvore(Hash *tab, int m, char * nome_arquivo_entrada) {
+    printf("\nInserindo funcionarios\n");
+    FILE *arq = fopen(nome_arquivo_entrada, "rb");
+    TFuncionario *func;
+    while ((func = le(arq)) != NULL) {
+        int h = hash(func->cod, m);
+        TFuncionario *p = tab[h];
+        TFuncionario *ant = NULL;
+        while ((p != NULL) && (p->cod != func->cod)) {
+            ant = p;
+            p = p->prox;
+        }
+        if (p != NULL) {
+            strcpy(p->nome, func->nome);
+            p->salario = func->salario;
         } else {
-            ant->prox = novo;
+            TFuncionario *novo = aloca(func->cod, func->nome, func->salario);
+            if (!ant) {
+                tab[h] = novo;
+            } else {
+                ant->prox = novo;
+            }
         }
     }
+    printf("\nFuncionarios adicionados com sucesso!\n\n");
 }
 
 void libera(Hash *tab, int m) {
@@ -120,6 +144,14 @@ void imprime(Hash *tab, int m) {
     }
 }
 
+//Salva funcionario no arquivo out, na posicao atual do cursor
+void salva(TFuncionario *func, FILE *out) {
+    fwrite(&func->cod, sizeof(int), 1, out);
+    //func->nome ao invasao de &func->nome, pois string 
+    fwrite(func->nome, sizeof(char), sizeof(func->nome), out);
+    fwrite(&func->salario, sizeof(double), 1, out);
+}
+
 void generate_unique_id() {
     for (int i = 0; i < TAM; i++) {
         do {
@@ -135,8 +167,7 @@ void generate_unique_id() {
     }
 }
 
-void insere(Hash *tab, int m){
-    printf("\nInserindo funcionarios\n");
+void insere_funcionarios(FILE *out){
     // Gerar nomes e salários aleatórios
     char *nome[] = {"Maria", "Jose", "Carlos", "Ana", "Paulo", "Lucia"};
     int num_names = sizeof(nome) / sizeof(nome[0]);
@@ -146,69 +177,77 @@ void insere(Hash *tab, int m){
         int random_index = rand() % num_names;
         salario = (double)rand() / RAND_MAX * (10000 - 1000) + 1000;
         TFuncionario *funcionario = aloca(id[i], nome[random_index], salario);
-        insereFuncionario(tab, m, funcionario);
+        salva(funcionario, out);
         free(funcionario);
     }
-    printf("\nFuncionarios adicionados com sucesso!\n\n");
 }
 
 int main(void) {
-    int m;
-    printf("Digite m (tamanho da tabela hash)... ");
-    scanf("%d", &m);
+    FILE *out;
+    //abre arquivo
+    if ((out = fopen("funcionario.dat", "w+b")) == NULL) {
+        printf("Erro ao abrir arquivo\n");
+        exit(1);
+    }
+    else {
+        int m;
+        printf("Digite m (tamanho da tabela hash)... ");
+        scanf("%d", &m);
 
-    if ((TAM <= 1) || (m <= 1)) return 0;
+        if ((TAM <= 1) || (m <= 1)) return 0;
 
-    Hash *tab[m];
-    inicializa(tab, m);
-    insere(tab, m);
-    imprime(tab, m);
+        Hash *tab[m];
+        inicializa(tab, m);
+        insere_funcionarios(out);
+        insereFuncionarioArvore(tab, m, "funcionario.dat");
+        imprime(tab, m);
 
 
-    int option = -2;
-    while (option != -1){
-        printf("1-> Remover funcionario\n");             
-        printf("2-> Ver informacoes de um funcionario\n");
-        scanf("%d", &option);
-  	    switch(option){
-        char resp;
-        case 1: {
-            do {
-                printf("Digite o codigo a ser excluida... ");
-                int mat;
-                float salario;
-                scanf("%d", &mat);
-                salario = exclui(tab, m, mat);
-                if (salario != -1){ 
-                    printf("%d\t%.2f foi excluido\n", mat, salario);
-                    imprime(tab, m);
-                }else{
-                    printf("Eleento nao encontrado!\n");
-                }
-                printf("Quer continuar? ");
-                scanf(" %c", &resp);
-            } while ((resp != 'N') && (resp != 'n'));
+        int option = -2;
+        while (option != -1){
+            printf("1-> Remover funcionario\n");             
+            printf("2-> Ver informacoes de um funcionario\n");
+            scanf("%d", &option);
+            switch(option){
+            char resp;
+            case 1: {
+                do {
+                    printf("Digite o codigo a ser excluida... ");
+                    int mat;
+                    float salario;
+                    scanf("%d", &mat);
+                    salario = exclui(tab, m, mat);
+                    if (salario != -1){ 
+                        printf("%d\t%.2f foi excluido\n", mat, salario);
+                        imprime(tab, m);
+                    }else{
+                        printf("Elemento nao encontrado!\n");
+                    }
+                    printf("Quer continuar? ");
+                    scanf(" %c", &resp);
+                } while ((resp != 'N') && (resp != 'n'));
+                break;
+            }
+            case 2:{
+                do {
+                    printf("Digite o codigo a ser procurada... ");
+                    int mat;
+                    float salario;
+                    scanf("%d", &mat);
+                    TFuncionario *p = busca(tab, m, mat);
+                    if (!p) printf("Elemento nao encontrado!\n");
+                    else printf("%d\t%s\t%.2f\n", p->cod, p->nome, p->salario);
+                    printf("Quer continuar? ");
+                    scanf(" %c", &resp);
+                } while ((resp != 'N') && (resp != 'n'));
+                libera(tab, m);
+                break;
+            }
+            default:{
             break;
+            }
         }
-        case 2:{
-            do {
-                printf("Digite o codigo a ser procurada... ");
-                int mat;
-                float salario;
-                scanf("%d", &mat);
-                TFuncionario *p = busca(tab, m, mat);
-                if (!p) printf("Elemento nao encontrado!\n");
-                else printf("%d\t%s\t%.2f\n", p->cod, p->nome, p->salario);
-                printf("Quer continuar? ");
-                scanf(" %c", &resp);
-            } while ((resp != 'N') && (resp != 'n'));
-            libera(tab, m);
-            break;
         }
-        default:{
-	      break;
-	    }
-      }
     }
     return 0;
 }
