@@ -12,7 +12,7 @@ typedef struct Funcionario {
 
 #define NUM_EMPLOYEES 1000
 int id[NUM_EMPLOYEES];
-int is_unique;
+int is_unique;5
 
 typedef struct auxFuncionario{
   int chave;  //codigo do funcionario

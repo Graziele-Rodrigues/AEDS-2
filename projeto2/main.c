@@ -12,6 +12,6 @@ int main() {
   iniciarArvore(); //arvore.bin
   iniciaArquivo(); //funcionario.bin
   menuEntrada();
-
++++
   return 0;
 }
