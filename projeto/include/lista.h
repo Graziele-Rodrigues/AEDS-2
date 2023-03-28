@@ -1,17 +1,30 @@
-#ifndef NOMES_H
-#define NOMES_H
+#ifndef LISTA_H_INCLUDED
+#define LISTA_H_INCLUDED
 
-
-typedef struct lista {
+typedef struct Lista {
     char *nome;
-    struct lista *prox;
+    struct Lista *prox;
 } Lista;
 
+// Imprime lista de nomes
+void imprime_nomes(Lista *nomes);
 
-Lista *lista_nomes_arquivos_saida;
+// Aloca copia de str
+char *cria_str(char *str);
 
-void inicializa_lista(Lista *lista, char *nomes[], int num_arquivos);
-int num_elementos_lista(Lista *lista);
-void percorre_lista(Lista *lista, void (*funcao)(char *));
+// Cria lista encadeada de nomes. Lembrar de chamar libera_nomes(nomes)
+Lista *cria_nomes(char *nome, Lista *prox);
 
-#endif
+// Desaloca lista encadeada de nomes
+void libera_nomes(Lista *nomes);
+
+// Retorna quantidade de nomes
+int conta_nomes(Lista *nomes);
+
+// Inverte lista encadeada de nomes
+void inverte_nomes(Lista *nomes);
+
+// Adiciona nome no final da lista
+void adiciona_nomes(Lista *nomes, char *nome);
+
+#endif // LISTA_H_INCLUDED

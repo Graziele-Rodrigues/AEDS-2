@@ -1,0 +1,5 @@
+Codigo: 77
+ Nome: Graziele 
+ Salario: 2077.000000
+Numero comparacoes: 7
+Tempo gasto: 0.001000

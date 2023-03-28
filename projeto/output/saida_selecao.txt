@@ -1,0 +1,2 @@
+Numero comparacoes: 193
+Tempo gasto: 0.016000

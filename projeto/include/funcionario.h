@@ -1,6 +1,13 @@
-#include <math.h>
-#include <time.h>
-#include "lista.h"
+#ifndef FUNCIONARIO_H_INCLUDED
+#define FUNCIONARIO_H_INCLUDED
+
+#include <stdlib.h>
+#include <stdio.h>
+
+//Constante para o numero de funcionarios
+#define NFUNC 100
+int is_unique;
+int id[NFUNC];
 
 typedef struct Funcionario {
     int cod;
@@ -8,28 +15,27 @@ typedef struct Funcionario {
     double salario;
 } TFunc;
 
-
-#define NUM_EMPLOYEES 100
-int id[NUM_EMPLOYEES];
-int is_unique;
-int comparisons;
-
-clock_t start, end;
-
+//id unico
 void generate_unique_id();
-TFunc *funcionario(int cod, char *nome, double salario);
-void salva(TFunc *func, FILE *out);
-TFunc *le(FILE *in);
-void le_funcionarios(FILE *in);
-void imprime_arquivo(FILE *arq);
+
+// Imprime funcionario
 void imprime(TFunc *func);
-void insere_funcionarios(FILE *out);
+
+// Cria funcionario. Lembrar de usar free(funcionario)
+TFunc *funcionario(int cod, char *nome, double salario);
+
+// Salva funcionario no arquivo out, na posicao atual do cursor
+void salva(TFunc *func, FILE *out);
+
+// Le um funcionario do arquivo in na posicao atual do cursor
+// Retorna um ponteiro para funcionario lido do arquivo
+TFunc *le(FILE *in);
+
+// Retorna tamanho do funcionario em bytes
 int tamanho_registro();
-int tamanho_arquivo(FILE *arq);
-void busca_funcionarios_sequencial(FILE *out);
-TFunc *busca_sequencial(FILE *busca, int chave);
-void busca_funcionarios_binario(FILE *out);
-TFunc *busca_binaria(int chave, FILE *in, int inicio, int fim);
-void insertion_sort_disco(FILE *arq, int tam);
-void ordenacao_por_substituicao(char *nome_arquivo_entrada, Lista *nome_arquivos_saida, int M);
-void intercalacao_otima(char * nome_arquivo_entrada1, char * nome_arquivo_entrada2, char * nome_arquivo_entrada3, char * nome_arquivo_saida);
+
+// Retorna o tamanho do arquivo em bytes
+int tamanho_arquivo(FILE *arq) ;
+
+
+#endif // FUNCIONARIO_H_INCLUDED
